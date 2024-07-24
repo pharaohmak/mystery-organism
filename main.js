@@ -4,7 +4,7 @@ const returnRandBase = () => {
   return dnaBases[Math.floor(Math.random() * 4)];
 };
 
-// Returns a random single stand of DNA containing 15 bases
+// Returns a random single strand of DNA containing 15 bases
 const mockUpStrand = () => {
   const newStrand = [];
   for (let i = 0; i < 15; i++) {
@@ -13,9 +13,9 @@ const mockUpStrand = () => {
   return newStrand;
 };
 
-const pAequorFactory = (specimanNum, dna) => {
+const pAequorFactory = (specimenNum, dna) => {
   return {
-    specimanNum,
+    specimenNum,
     dna,
     mutate() {
       const randIndex = Math.floor(Math.random() * this.dna.length);
@@ -36,7 +36,7 @@ const pAequorFactory = (specimanNum, dna) => {
       }, 0);
       const percentOfDNAshared = (similarities / this.dna.length) * 100;
       const percentageTo2Deci = percentOfDNAshared.toFixed(2);
-      console.log(`${this.specimanNum} and ${otherOrg.specimanNum} have ${percentageTo2Deci}% DNA in common.`);
+      console.log(`${this.specimenNum} and ${otherOrg.specimenNum} have ${percentageTo2Deci}% DNA in common.`);
     },
     willLikelySurvive() {
       const cOrG = this.dna.filter(el => el === "C" || el === "G");
@@ -45,23 +45,33 @@ const pAequorFactory = (specimanNum, dna) => {
   }
 };
 
-const survivingSpecimen = [];
-let idCounter = 1;
+const displaySurvivingSpecimens = () => {
+  const survivingSpecimen = [];
+  let idCounter = 1;
 
-while (survivingSpecimen.length < 30) {
-  let newOrg = pAequorFactory(idCounter, mockUpStrand());
-  if (newOrg.willLikelySurvive()) {
-    survivingSpecimen.push(newOrg);
+  while (survivingSpecimen.length < 30) {
+    let newOrg = pAequorFactory(idCounter, mockUpStrand());
+    if (newOrg.willLikelySurvive()) {
+      survivingSpecimen.push(newOrg);
+    }
+    idCounter++;
   }
-  idCounter++;
-}
 
-console.log(survivingSpecimen)
+  const specimenList = document.getElementById('specimenList');
+  specimenList.innerHTML = '';
 
+  survivingSpecimen.forEach(org => {
+    const specimenDiv = document.createElement('div');
+    specimenDiv.classList.add('specimen');
+    specimenDiv.innerHTML = `
+      <p>Specimen Number: ${org.specimenNum}</p>
+      <p>DNA: ${org.dna.join('-')}</p>
+    `;
+    specimenList.appendChild(specimenDiv);
+  });
+};
 
+document.getElementById('generateSpecimens').addEventListener('click', displaySurvivingSpecimens);
 
-
-
-
-
-
+// Initial testing
+displaySurvivingSpecimens();
